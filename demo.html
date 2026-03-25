@@ -96,6 +96,17 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .typing-dots span:nth-child(3){animation-delay:.4s}
 .typing-text{font-size:13px;color:var(--text3)}
 
+/* ── Tier Feature Preview ── */
+.tier-preview{margin-bottom:20px;animation:fadeUp .3s ease}
+.tier-features{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.tier-feat{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#0d0d10;border-radius:8px;font-size:12px;border:1px solid var(--border);transition:all .3s ease}
+.tier-feat .check{font-size:14px;flex-shrink:0}
+.tier-feat .feat-text{color:var(--text2)}
+.tier-feat.included .feat-text{color:var(--text)}
+.tier-feat.locked{opacity:.4}
+.tier-feat.locked .feat-text{text-decoration:line-through}
+@media(max-width:500px){.tier-features{grid-template-columns:1fr}}
+
 .footer-note{text-align:center;margin-top:32px;font-size:12px;color:var(--text3)}
 .footer-note a{color:var(--green);text-decoration:none}
 </style>
@@ -121,6 +132,11 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
         <button class="tier-opt active" onclick="setTier('free')">Free</button>
         <button class="tier-opt" onclick="setTier('pro')">Pro — $49/yr</button>
         <button class="tier-opt" onclick="setTier('max')">Max — $99/yr</button>
+      </div>
+
+      <!-- Tier Feature Preview -->
+      <div id="tier-preview" class="tier-preview">
+        <div class="tier-features" id="tier-features"></div>
       </div>
 
       <!-- Input -->
@@ -201,6 +217,21 @@ const RECS = [
   { dim:'Content Length', tip:'Expand to 1,500+ words. Comprehensive content ranks higher for competitive keywords.', icon:'📏' },
 ];
 
+const TIER_FEATURES = [
+  { text:'SXO Score (0-100)', free:true, pro:true, max:true },
+  { text:'8 Dimension Breakdown', free:false, pro:true, max:true },
+  { text:'Detailed Recommendations', free:false, pro:true, max:true },
+  { text:'Fix Guides (How-To)', free:false, pro:true, max:true },
+  { text:'CRO9 Conversion Tracking', free:false, pro:true, max:true },
+  { text:'Schema.org Auto-Inject', free:true, pro:true, max:true },
+  { text:'REST API Access', free:false, pro:true, max:true },
+  { text:'AI Content Writer', free:false, pro:false, max:true },
+  { text:'AI Page Optimizer', free:false, pro:false, max:true },
+  { text:'Beaver Builder Output', free:false, pro:false, max:true },
+  { text:'Elementor Output', free:false, pro:false, max:true },
+  { text:'Claude Skill (100+ prompts)', free:false, pro:false, max:true },
+];
+
 function setTier(t) {
   currentTier = t;
   document.querySelectorAll('.tier-opt').forEach(b => b.classList.remove('active'));
@@ -210,11 +241,24 @@ function setTier(t) {
   else if (t === 'pro') { badge.textContent = 'PRO'; badge.style.background = 'rgba(59,130,246,0.1)'; badge.style.color = '#3b82f6'; }
   else { badge.textContent = 'MAX'; badge.style.background = 'rgba(168,85,247,0.1)'; badge.style.color = '#a855f7'; }
 
+  // Render tier features
+  const el = document.getElementById('tier-features');
+  el.innerHTML = TIER_FEATURES.map(f => {
+    const included = f[t];
+    return `<div class="tier-feat ${included ? 'included' : 'locked'}">
+      <span class="check">${included ? '✅' : '🔒'}</span>
+      <span class="feat-text">${f.text}</span>
+    </div>`;
+  }).join('');
+
   // Re-render if score is showing
   if (document.getElementById('score-area').classList.contains('active')) {
     renderTierGates();
   }
 }
+
+// Init features on load
+setTier('free');
 
 function renderTierGates() {
   document.getElementById('pro-gate').classList.toggle('active', currentTier === 'free');
