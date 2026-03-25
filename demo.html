@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WP-SXO — Live Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#09090b;--card:#111114;--border:#1e1e23;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;--orange:#f97316;--red:#ef4444;--yellow:#eab308;--text:#fafafa;--text2:#a1a1aa;--text3:#52525b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;overflow-x:hidden}
+
+.demo-wrap{width:100%;max-width:720px}
+
+.demo-header{text-align:center;margin-bottom:40px}
+.demo-header h1{font-size:32px;font-weight:900;margin-bottom:8px}
+.demo-header h1 span{background:linear-gradient(135deg,var(--green),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.demo-header p{color:var(--text2);font-size:15px}
+
+/* ── Fake Editor ── */
+.editor{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;position:relative}
+.editor-bar{display:flex;align-items:center;padding:10px 16px;background:#0d0d10;border-bottom:1px solid var(--border);gap:8px}
+.editor-dots{display:flex;gap:5px}
+.editor-dots span{width:10px;height:10px;border-radius:50%}
+.editor-title{flex:1;text-align:center;font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace}
+.editor-badge{font-size:9px;font-weight:700;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px}
+
+.editor-content{padding:24px;min-height:320px;position:relative}
+
+/* ── Input Area ── */
+.demo-input{margin-bottom:20px}
+.demo-input label{display:block;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.demo-input input{width:100%;background:#0d0d10;border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--text);font-size:15px;font-family:inherit;outline:none;transition:border .2s}
+.demo-input input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(34,197,94,0.1)}
+.demo-input input::placeholder{color:var(--text3)}
+
+.demo-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--green),#16a34a);color:#000;border:none;border-radius:10px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .2s;margin-bottom:24px}
+.demo-btn:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(34,197,94,0.3)}
+.demo-btn:disabled{opacity:.4;transform:none;cursor:wait}
+
+/* ── Score Display ── */
+.score-area{display:none}
+.score-area.active{display:block;animation:fadeUp .5s ease}
+
+.score-hero{display:flex;align-items:center;gap:24px;margin-bottom:24px;padding:20px;background:#0d0d10;border-radius:12px;border:1px solid var(--border)}
+.score-circle{position:relative;width:100px;height:100px;flex-shrink:0}
+.score-circle svg{transform:rotate(-90deg);width:100px;height:100px}
+.score-circle .track{fill:none;stroke:var(--border);stroke-width:6}
+.score-circle .fill{fill:none;stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset 1.5s ease,stroke 1s ease}
+.score-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;font-family:'JetBrains Mono',monospace}
+.score-grade{font-size:12px;color:var(--text3);text-align:center;margin-top:4px}
+.score-info{flex:1}
+.score-info h3{font-size:18px;font-weight:700;margin-bottom:4px}
+.score-info p{font-size:13px;color:var(--text2)}
+
+/* ── Dimension Bars ── */
+.dims{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.dim{opacity:0;animation:fadeRight .4s ease forwards}
+.dim-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.dim-label{font-size:12px;color:var(--text2)}
+.dim-score{font-size:12px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.dim-bar{height:6px;background:#1e1e23;border-radius:3px;overflow:hidden}
+.dim-fill{height:100%;border-radius:3px;width:0;transition:width 1.2s ease}
+
+/* ── Recommendations ── */
+.recs{display:none;margin-top:20px}
+.recs.active{display:block}
+.recs-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--orange);margin-bottom:10px}
+.rec{display:flex;align-items:flex-start;gap:10px;padding:10px;background:#0d0d10;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:12px;color:var(--text2);opacity:0;animation:fadeUp .3s ease forwards}
+.rec-icon{font-size:14px;flex-shrink:0;margin-top:1px}
+.rec strong{color:var(--text)}
+
+/* ── Tier Gates ── */
+.tier-gate{text-align:center;padding:20px;background:linear-gradient(135deg,rgba(34,197,94,0.05),rgba(59,130,246,0.05));border:1px dashed var(--border);border-radius:12px;margin-top:16px;display:none}
+.tier-gate.active{display:block;animation:fadeUp .4s ease}
+.tier-gate h4{font-size:14px;font-weight:700;margin-bottom:6px}
+.tier-gate p{font-size:12px;color:var(--text2);margin-bottom:12px}
+.tier-gate .upgrade-btn{display:inline-block;padding:10px 24px;background:var(--green);color:#000;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:all .2s}
+.tier-gate .upgrade-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(34,197,94,0.3)}
+
+/* ── Tier Toggle ── */
+.tier-toggle{display:flex;gap:4px;margin-bottom:20px;background:#0d0d10;border-radius:8px;padding:3px;border:1px solid var(--border)}
+.tier-opt{flex:1;padding:8px;text-align:center;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--text3);border:none;background:transparent;font-family:inherit}
+.tier-opt.active{background:var(--green);color:#000}
+.tier-opt:hover:not(.active){color:var(--text2)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeRight{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* ── Typing Animation ── */
+.typing{display:none;padding:16px;text-align:center}
+.typing.active{display:flex;align-items:center;justify-content:center;gap:8px}
+.typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 1.4s infinite}
+.typing-dots span:nth-child(2){animation-delay:.2s}
+.typing-dots span:nth-child(3){animation-delay:.4s}
+.typing-text{font-size:13px;color:var(--text3)}
+
+.footer-note{text-align:center;margin-top:32px;font-size:12px;color:var(--text3)}
+.footer-note a{color:var(--green);text-decoration:none}
+</style>
+</head>
+<body>
+
+<div class="demo-wrap">
+  <div class="demo-header">
+    <h1>WP-<span>SXO</span> Live Demo</h1>
+    <p>Paste any URL or text — watch it get scored in real time.</p>
+  </div>
+
+  <div class="editor">
+    <div class="editor-bar">
+      <div class="editor-dots"><span style="background:#ff5f57"></span><span style="background:#febc2e"></span><span style="background:#28c840"></span></div>
+      <div class="editor-title">wp-sxo-analyzer</div>
+      <div class="editor-badge" id="tier-badge" style="background:rgba(34,197,94,0.1);color:#22c55e;">FREE</div>
+    </div>
+    <div class="editor-content">
+
+      <!-- Tier Toggle -->
+      <div class="tier-toggle">
+        <button class="tier-opt active" onclick="setTier('free')">Free</button>
+        <button class="tier-opt" onclick="setTier('pro')">Pro — $49/yr</button>
+        <button class="tier-opt" onclick="setTier('max')">Max — $99/yr</button>
+      </div>
+
+      <!-- Input -->
+      <div class="demo-input" id="input-area">
+        <label>Enter a page title or topic</label>
+        <input type="text" id="topic" placeholder="e.g. Best facials in Ligonier PA" value="Why Every Business Needs an MCP Server in 2026">
+      </div>
+      <button class="demo-btn" id="score-btn" onclick="runScore()">Score This Content</button>
+
+      <!-- Typing -->
+      <div class="typing" id="typing">
+        <div class="typing-dots"><span></span><span></span><span></span></div>
+        <div class="typing-text" id="typing-text">Analyzing SXO architecture...</div>
+      </div>
+
+      <!-- Score Area -->
+      <div class="score-area" id="score-area">
+        <div class="score-hero">
+          <div class="score-circle">
+            <svg viewBox="0 0 100 100">
+              <circle class="track" cx="50" cy="50" r="42"/>
+              <circle class="fill" id="score-ring" cx="50" cy="50" r="42" stroke-dasharray="264" stroke-dashoffset="264"/>
+            </svg>
+            <div class="score-num" id="score-num">0</div>
+          </div>
+          <div class="score-info">
+            <h3 id="score-title">Analyzing...</h3>
+            <p id="score-sub">SXO Score across 8 dimensions</p>
+          </div>
+        </div>
+
+        <div class="dims" id="dims"></div>
+
+        <!-- Pro Gate -->
+        <div class="tier-gate" id="pro-gate">
+          <h4>Unlock Detailed Recommendations</h4>
+          <p>See exactly what to fix and how — dimension by dimension.</p>
+          <a href="#" class="upgrade-btn">Upgrade to Pro — $49/yr</a>
+        </div>
+
+        <!-- Recommendations (Pro+) -->
+        <div class="recs" id="recs"></div>
+
+        <!-- Max Gate -->
+        <div class="tier-gate" id="max-gate">
+          <h4>Want AI to Fix This For You?</h4>
+          <p>One click — Claude rewrites the weak sections, restructures headers, adds schema. Published.</p>
+          <a href="#" class="upgrade-btn" style="background:var(--blue)">Upgrade to Max — $99/yr</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    <a href="https://wpsxo.com">wpsxo.com</a> — Search Experience Optimization for WordPress
+  </div>
+</div>
+
+<script>
+let currentTier = 'free';
+
+const DIMS = [
+  { key:'bluf', label:'BLUF Architecture', weight:0.20, color:'#22c55e' },
+  { key:'headers', label:'Header Depth', weight:0.15, color:'#3b82f6' },
+  { key:'info', label:'Information Gain', weight:0.15, color:'#a855f7' },
+  { key:'table', label:'Table Trap', weight:0.10, color:'#f97316' },
+  { key:'read', label:'Readability', weight:0.15, color:'#06b6d4' },
+  { key:'schema', label:'Schema Markup', weight:0.10, color:'#ec4899' },
+  { key:'links', label:'Internal Links', weight:0.05, color:'#eab308' },
+  { key:'length', label:'Content Length', weight:0.10, color:'#8b5cf6' },
+];
+
+const RECS = [
+  { dim:'BLUF Architecture', tip:'Move your main point to the first paragraph. Google\'s featured snippets pull from the first answer found.', icon:'📝' },
+  { dim:'Table Trap', tip:'Add a comparison table. Content with tables is 3x more likely to earn a featured snippet.', icon:'📊' },
+  { dim:'Internal Links', tip:'Add 2-3 contextual links to related content. Use descriptive anchor text, not "click here."', icon:'🔗' },
+  { dim:'Schema Markup', tip:'Add FAQPage schema to your FAQ section. This enables rich results in Google search.', icon:'🏷️' },
+  { dim:'Content Length', tip:'Expand to 1,500+ words. Comprehensive content ranks higher for competitive keywords.', icon:'📏' },
+];
+
+function setTier(t) {
+  currentTier = t;
+  document.querySelectorAll('.tier-opt').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  const badge = document.getElementById('tier-badge');
+  if (t === 'free') { badge.textContent = 'FREE'; badge.style.background = 'rgba(34,197,94,0.1)'; badge.style.color = '#22c55e'; }
+  else if (t === 'pro') { badge.textContent = 'PRO'; badge.style.background = 'rgba(59,130,246,0.1)'; badge.style.color = '#3b82f6'; }
+  else { badge.textContent = 'MAX'; badge.style.background = 'rgba(168,85,247,0.1)'; badge.style.color = '#a855f7'; }
+
+  // Re-render if score is showing
+  if (document.getElementById('score-area').classList.contains('active')) {
+    renderTierGates();
+  }
+}
+
+function renderTierGates() {
+  document.getElementById('pro-gate').classList.toggle('active', currentTier === 'free');
+  document.getElementById('recs').classList.toggle('active', currentTier !== 'free');
+  document.getElementById('max-gate').classList.toggle('active', currentTier === 'pro');
+}
+
+async function runScore() {
+  const btn = document.getElementById('score-btn');
+  btn.disabled = true;
+  document.getElementById('score-area').classList.remove('active');
+  document.getElementById('typing').classList.add('active');
+
+  const steps = [
+    'Analyzing BLUF architecture...',
+    'Checking header hierarchy...',
+    'Evaluating information gain...',
+    'Scanning for table traps...',
+    'Measuring readability...',
+    'Verifying schema markup...',
+    'Counting internal links...',
+    'Assessing content depth...',
+    'Calculating final score...',
+  ];
+
+  for (const step of steps) {
+    document.getElementById('typing-text').textContent = step;
+    await sleep(400 + Math.random() * 300);
+  }
+
+  document.getElementById('typing').classList.remove('active');
+
+  // Generate realistic scores
+  const scores = DIMS.map(d => ({
+    ...d,
+    score: Math.floor(50 + Math.random() * 45),
+  }));
+
+  // Calculate weighted overall
+  let overall = 0;
+  scores.forEach(s => overall += s.score * s.weight);
+  overall = Math.round(overall);
+
+  // Render
+  const scoreArea = document.getElementById('score-area');
+  scoreArea.classList.add('active');
+
+  // Animate circle
+  const ring = document.getElementById('score-ring');
+  const circumference = 264;
+  const offset = circumference - (overall / 100) * circumference;
+  ring.style.strokeDashoffset = offset;
+  ring.style.stroke = overall >= 80 ? '#22c55e' : overall >= 60 ? '#eab308' : overall >= 40 ? '#f97316' : '#ef4444';
+
+  // Animate number
+  animateNumber('score-num', 0, overall, 1500);
+
+  // Grade
+  const grade = overall >= 90 ? 'A+' : overall >= 80 ? 'A' : overall >= 70 ? 'B' : overall >= 60 ? 'C' : overall >= 50 ? 'D' : 'F';
+  document.getElementById('score-title').textContent = `Grade: ${grade}`;
+  document.getElementById('score-sub').textContent = `${document.getElementById('topic').value || 'Your content'} — ${Math.floor(800 + Math.random() * 1200)} words`;
+
+  // Dimension bars
+  const dimsEl = document.getElementById('dims');
+  dimsEl.innerHTML = scores.map((s, i) => `
+    <div class="dim" style="animation-delay:${i * 0.08}s">
+      <div class="dim-top">
+        <span class="dim-label">${s.label}</span>
+        <span class="dim-score" style="color:${s.score >= 70 ? s.color : s.score >= 50 ? '#eab308' : '#ef4444'}">${currentTier === 'free' ? '??' : s.score}</span>
+      </div>
+      <div class="dim-bar">
+        <div class="dim-fill" style="background:${s.color};"></div>
+      </div>
+    </div>
+  `).join('');
+
+  // Animate bars after a tick
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      dimsEl.querySelectorAll('.dim-fill').forEach((bar, i) => {
+        bar.style.width = (currentTier === 'free' ? 0 : scores[i].score) + '%';
+      });
+    }, 100);
+  });
+
+  // Recommendations
+  const recsEl = document.getElementById('recs');
+  const lowScores = scores.filter(s => s.score < 70).sort((a, b) => a.score - b.score);
+  recsEl.innerHTML = '<div class="recs-title">Top Recommendations</div>' +
+    RECS.slice(0, Math.min(3, lowScores.length || 2)).map((r, i) => `
+      <div class="rec" style="animation-delay:${0.5 + i * 0.15}s">
+        <span class="rec-icon">${r.icon}</span>
+        <div><strong>${r.dim}:</strong> ${r.tip}</div>
+      </div>
+    `).join('');
+
+  renderTierGates();
+  btn.disabled = false;
+}
+
+function animateNumber(id, from, to, duration) {
+  const el = document.getElementById(id);
+  const start = performance.now();
+  function tick(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(from + (to - from) * eased);
+    if (progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+</script>
+</body>
+</html>

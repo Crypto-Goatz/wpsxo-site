@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WP-SXO — AI Content Engine for WordPress | Search Experience Optimization</title>
+<meta name="description" content="The WordPress plugin that writes, scores, and optimizes content using SXO methodology + CRO9 conversion tracking. AI-powered blog posts, landing pages, and SEO content that actually ranks.">
+<link rel="canonical" href="https://wpsxo.com">
+<meta property="og:title" content="WP-SXO — AI Content Engine for WordPress">
+<meta property="og:description" content="AI writes SXO-optimized content. CRO9 tracks what converts. Your WordPress site becomes a revenue machine.">
+<meta property="og:url" content="https://wpsxo.com">
+<meta property="og:type" content="website">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #09090b;
+  --bg2: #111114;
+  --bg3: #18181b;
+  --surface: #1e1e23;
+  --border: #27272a;
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.1);
+  --green-glow: rgba(34,197,94,0.2);
+  --blue: #3b82f6;
+  --purple: #a855f7;
+  --orange: #f97316;
+  --text: #fafafa;
+  --text2: #a1a1aa;
+  --text3: #52525b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.mono{font-family:'JetBrains Mono',monospace}
+
+/* ── Nav ── */
+.nav{position:sticky;top:0;z-index:50;background:rgba(9,9,11,0.8);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:14px 24px}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-size:18px;font-weight:900;letter-spacing:-.02em}
+.nav-logo span{color:var(--green)}
+.nav-links{display:flex;align-items:center;gap:24px}
+.nav-links a{font-size:13px;color:var(--text2);transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{background:var(--green);color:#000;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:700;transition:all .2s}
+.nav-cta:hover{opacity:.9;transform:translateY(-1px)}
+
+/* ── Hero ── */
+.hero{padding:100px 24px 80px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:800px;background:radial-gradient(circle,rgba(34,197,94,0.08) 0%,transparent 70%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--green-dim);border:1px solid rgba(34,197,94,0.2);padding:6px 16px;border-radius:100px;font-size:12px;font-weight:600;color:var(--green);margin-bottom:24px}
+.hero h1{font-size:clamp(40px,6vw,72px);font-weight:900;line-height:1.05;letter-spacing:-.03em;max-width:800px;margin:0 auto 20px}
+.hero h1 .grad{background:linear-gradient(135deg,var(--green),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:18px;color:var(--text2);max-width:560px;margin:0 auto 36px;line-height:1.7}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-lg{padding:14px 32px;border-radius:10px;font-size:15px;font-weight:700;border:none;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn-green{background:var(--green);color:#000}
+.btn-green:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(34,197,94,0.3)}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--text2)}
+.hero-sub{margin-top:32px;font-size:13px;color:var(--text3);display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
+.hero-sub .dot{width:4px;height:4px;border-radius:50%;background:var(--text3)}
+
+/* ── Section ── */
+.sec{max-width:1100px;margin:0 auto;padding:80px 24px}
+.sec-title{font-size:clamp(28px,4vw,42px);font-weight:800;letter-spacing:-.02em;text-align:center;margin-bottom:12px}
+.sec-sub{text-align:center;font-size:16px;color:var(--text2);max-width:540px;margin:0 auto 48px}
+
+/* ── How It Works ── */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.step{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px;position:relative;transition:border-color .3s}
+.step:hover{border-color:var(--green)}
+.step-num{font-family:'JetBrains Mono',monospace;font-size:48px;font-weight:900;color:var(--border);line-height:1;margin-bottom:12px}
+.step h3{font-size:17px;font-weight:700;margin-bottom:8px}
+.step p{font-size:14px;color:var(--text2);line-height:1.7}
+@media(max-width:768px){.steps{grid-template-columns:1fr}}
+
+/* ── Features ── */
+.features{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.feature{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px;transition:border-color .3s}
+.feature:hover{border-color:var(--green)}
+.feature-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px}
+.feature h3{font-size:15px;font-weight:700;margin-bottom:6px}
+.feature p{font-size:13px;color:var(--text2);line-height:1.7}
+@media(max-width:640px){.features{grid-template-columns:1fr}}
+
+/* ── SXO Score Demo ── */
+.score-demo{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:32px;max-width:700px;margin:0 auto}
+.score-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.score-header h3{font-size:16px;font-weight:700}
+.score-badge{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:900;color:var(--green)}
+.score-bars{display:flex;flex-direction:column;gap:12px}
+.score-bar{display:flex;align-items:center;gap:12px}
+.score-bar-label{width:120px;font-size:12px;color:var(--text2);text-align:right;flex-shrink:0}
+.score-bar-track{flex:1;height:8px;background:var(--surface);border-radius:4px;overflow:hidden}
+.score-bar-fill{height:100%;border-radius:4px;transition:width 1s ease}
+
+/* ── CRO9 ── */
+.cro9-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.cro9-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px;text-align:center}
+.cro9-card .big{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:900;margin-bottom:4px}
+.cro9-card .label{font-size:12px;color:var(--text2)}
+@media(max-width:640px){.cro9-grid{grid-template-columns:1fr}}
+
+/* ── Pricing ── */
+.pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:900px;margin:0 auto}
+.plan{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px;position:relative}
+.plan.pop{border-color:var(--green);box-shadow:0 0 30px rgba(34,197,94,0.1)}
+.plan-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--green);color:#000;padding:4px 16px;border-radius:100px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}
+.plan-name{font-size:14px;font-weight:700;color:var(--text2);margin-bottom:8px}
+.plan-price{font-size:36px;font-weight:900;margin-bottom:4px}
+.plan-price small{font-size:14px;color:var(--text3);font-weight:500}
+.plan-desc{font-size:13px;color:var(--text3);margin-bottom:20px}
+.plan-features{list-style:none;padding:0;margin-bottom:24px}
+.plan-features li{font-size:13px;color:var(--text2);padding:6px 0;display:flex;align-items:center;gap:8px}
+.plan-features li::before{content:'✓';color:var(--green);font-weight:700;font-size:12px}
+.plan-btn{display:block;width:100%;padding:12px;border-radius:8px;font-size:14px;font-weight:700;text-align:center;border:none;cursor:pointer;transition:all .2s}
+.plan-btn-green{background:var(--green);color:#000}
+.plan-btn-green:hover{opacity:.9}
+.plan-btn-ghost{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.plan-btn-ghost:hover{border-color:var(--text2)}
+@media(max-width:768px){.pricing{grid-template-columns:1fr}}
+
+/* ── Code Block ── */
+.code-block{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;max-width:600px;margin:0 auto}
+.code-header{padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.code-header .dots{display:flex;gap:5px}
+.code-header .dots span{width:10px;height:10px;border-radius:50%}
+.code-body{padding:20px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.8;color:var(--text2);overflow-x:auto}
+.code-body .kw{color:var(--purple)}
+.code-body .fn{color:var(--blue)}
+.code-body .str{color:var(--green)}
+.code-body .cm{color:var(--text3)}
+
+/* ── CTA ── */
+.cta-section{background:linear-gradient(135deg,rgba(34,197,94,0.06),rgba(59,130,246,0.06));border:1px solid var(--border);border-radius:20px;padding:64px 32px;text-align:center;margin:80px auto;max-width:1100px}
+.cta-section h2{font-size:clamp(28px,4vw,40px);font-weight:900;margin-bottom:12px}
+.cta-section p{font-size:16px;color:var(--text2);max-width:480px;margin:0 auto 28px}
+
+/* ── Footer ── */
+.footer{border-top:1px solid var(--border);padding:40px 24px;text-align:center}
+.footer-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.footer-left{font-size:13px;color:var(--text3)}
+.footer-left span{color:var(--green);font-weight:700}
+.footer-links{display:flex;gap:20px}
+.footer-links a{font-size:13px;color:var(--text3);transition:color .2s}
+.footer-links a:hover{color:var(--text)}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-logo">WP<span>SXO</span></div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#cro9">CRO9</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#pricing" class="nav-cta">Get WP-SXO</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-badge">
+    <span style="width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite"></span>
+    WordPress Plugin — Install in 30 Seconds
+  </div>
+  <h1>AI Content That<br><span class="grad">Actually Ranks</span></h1>
+  <p>WP-SXO writes, scores, and optimizes your WordPress content using Search Experience Optimization methodology. Built-in CRO9 conversion tracking tells you what content makes money.</p>
+  <div class="hero-btns">
+    <a href="#pricing" class="btn-lg btn-green">Download WP-SXO — Free</a>
+    <a href="#demo" class="btn-lg btn-ghost">See It Score Content →</a>
+  </div>
+  <div class="hero-sub">
+    <span>SXO Architecture</span><span class="dot"></span>
+    <span>CRO9 Conversion Tracking</span><span class="dot"></span>
+    <span>AI Content Generation</span><span class="dot"></span>
+    <span>Schema.org Auto-Inject</span>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section class="sec">
+  <h2 class="sec-title">Content That Ranks in 3 Steps</h2>
+  <p class="sec-sub">Stop guessing. SXO is a system — every piece of content follows the same architecture that Google rewards.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3>Describe What You Want</h3>
+      <p>Enter a topic, keyword, or business goal. WP-SXO's AI generates a full blog post or landing page using SXO architecture — BLUF, Table Trap, Information Gain, FAQ schema.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3>Score & Optimize</h3>
+      <p>Every piece of content gets an SXO Score (0-100). The plugin tells you exactly what's missing — header depth, keyword density, schema markup, internal links, readability.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3>Track What Converts</h3>
+      <p>CRO9 tracks the gap between traffic and revenue. Which posts generate leads? Which keywords bring buyers vs. browsers? Data-driven decisions, not gut feelings.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SXO Score Demo -->
+<section class="sec" id="demo">
+  <h2 class="sec-title">See Your SXO Score</h2>
+  <p class="sec-sub">Every piece of content is scored against the SXO framework. Here's what an optimized post looks like:</p>
+  <div class="score-demo">
+    <div class="score-header">
+      <h3>SXO Analysis: "Why Every Business Needs an MCP Server"</h3>
+      <div class="score-badge">94</div>
+    </div>
+    <div class="score-bars">
+      <div class="score-bar"><span class="score-bar-label">BLUF Architecture</span><div class="score-bar-track"><div class="score-bar-fill" style="width:95%;background:var(--green)"></div></div></div>
+      <div class="score-bar"><span class="score-bar-label">Header Depth</span><div class="score-bar-track"><div class="score-bar-fill" style="width:100%;background:var(--green)"></div></div></div>
+      <div class="score-bar"><span class="score-bar-label">Information Gain</span><div class="score-bar-track"><div class="score-bar-fill" style="width:88%;background:var(--green)"></div></div></div>
+      <div class="score-bar"><span class="score-bar-label">Table Trap</span><div class="score-bar-track"><div class="score-bar-fill" style="width:92%;background:var(--green)"></div></div></div>
+      <div class="score-bar"><span class="score-bar-label">Schema Markup</span><div class="score-bar-track"><div class="score-bar-fill" style="width:100%;background:var(--green)"></div></div></div>
+      <div class="score-bar"><span class="score-bar-label">Keyword Density</span><div class="score-bar-track"><div class="score-bar-fill" style="width:85%;background:var(--blue)"></div></div></div>
+      <div class="score-bar"><span class="score-bar-label">Internal Links</span><div class="score-bar-track"><div class="score-bar-fill" style="width:70%;background:var(--orange)"></div></div></div>
+      <div class="score-bar"><span class="score-bar-label">Readability</span><div class="score-bar-track"><div class="score-bar-fill" style="width:96%;background:var(--green)"></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="sec" id="features">
+  <h2 class="sec-title">Everything SXO, Built Into WordPress</h2>
+  <p class="sec-sub">No more juggling 5 SEO plugins. WP-SXO does content creation, optimization, and conversion tracking in one.</p>
+  <div class="features">
+    <div class="feature">
+      <div class="feature-icon" style="background:var(--green-dim);color:var(--green)">✦</div>
+      <h3>AI Content Generator</h3>
+      <p>Describe a topic → get a full SXO-optimized blog post or landing page. BLUF architecture, proper header depth, FAQ schema, internal linking suggestions. Published to WordPress in one click.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon" style="background:rgba(59,130,246,0.1);color:var(--blue)">◎</div>
+      <h3>SXO Scoring Engine</h3>
+      <p>Real-time content scoring as you write. Every post gets a 0-100 SXO Score across 8 dimensions. The plugin tells you exactly what to fix to rank higher.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon" style="background:rgba(249,115,22,0.1);color:var(--orange)">△</div>
+      <h3>CRO9 Conversion Tracking</h3>
+      <p>Track the gap between traffic and revenue. Which blog posts generate leads? Which landing pages convert? CRO9 scores every piece of content by business impact, not just traffic.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon" style="background:rgba(168,85,247,0.1);color:var(--purple)">◆</div>
+      <h3>Schema.org Auto-Inject</h3>
+      <p>Article, FAQPage, HowTo, LocalBusiness, Product — WP-SXO automatically detects your content type and injects the right structured data. No code needed.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon" style="background:var(--green-dim);color:var(--green)">⚡</div>
+      <h3>Radial Burst Distribution</h3>
+      <p>One post → published everywhere. WordPress blog, Dev.to, LinkedIn, CRM blog, social media. Content originates on your site (canonical URL), then blasts to all channels.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon" style="background:rgba(59,130,246,0.1);color:var(--blue)">↻</div>
+      <h3>Self-Improving Loop</h3>
+      <p>WP-SXO learns from your results. Content that scores high on CRO9 informs the AI's next generation. Your content engine gets better every week automatically.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CRO9 -->
+<section class="sec" id="cro9" style="background:var(--bg2);max-width:100%;border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div style="max-width:1100px;margin:0 auto">
+    <h2 class="sec-title">CRO9: The Missing Metric</h2>
+    <p class="sec-sub">Everyone tracks traffic. Nobody tracks the gap between visits and revenue. CRO9 does.</p>
+    <div class="cro9-grid">
+      <div class="cro9-card"><div class="big" style="color:var(--green)">94%</div><div class="label">of content gets traffic but zero leads</div></div>
+      <div class="cro9-card"><div class="big" style="color:var(--orange)">3.2x</div><div class="label">ROI increase with CRO9 optimization</div></div>
+      <div class="cro9-card"><div class="big" style="color:var(--blue)">$0</div><div class="label">extra ad spend — just better content</div></div>
+    </div>
+    <div style="margin-top:32px;text-align:center">
+      <p style="font-size:15px;color:var(--text2);max-width:560px;margin:0 auto;line-height:1.8">
+        CRO9 tags every piece of content with conversion data. Blog post A gets 5,000 views and 0 leads — <strong style="color:var(--orange)">CRO9 score: 12</strong>. Blog post B gets 800 views and 23 leads — <strong style="color:var(--green)">CRO9 score: 91</strong>. Stop writing post A. Write more of post B. That's CRO9.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Install Code -->
+<section class="sec">
+  <h2 class="sec-title">Install in 30 Seconds</h2>
+  <p class="sec-sub">Download, upload, activate. That's it.</p>
+  <div class="code-block">
+    <div class="code-header">
+      <div class="dots"><span style="background:#ff5f57"></span><span style="background:#febc2e"></span><span style="background:#28c840"></span></div>
+      <span style="font-size:12px;color:var(--text3);margin-left:8px">WordPress Admin</span>
+    </div>
+    <div class="code-body">
+      <span class="cm">// Step 1: Download the plugin</span><br>
+      Plugins → Add New → Upload → <span class="str">wp-sxo.zip</span><br><br>
+      <span class="cm">// Step 2: Activate</span><br>
+      Plugins → Activate <span class="str">"WP-SXO"</span><br><br>
+      <span class="cm">// Step 3: Generate your first post</span><br>
+      WP-SXO → <span class="fn">New Content</span> → Enter topic → <span class="kw">Generate</span><br><br>
+      <span class="cm">// That's it. SXO Score appears on every post.</span><br>
+      <span class="cm">// CRO9 tracking starts automatically.</span>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section class="sec" id="pricing">
+  <h2 class="sec-title">Start Free. Scale When Ready.</h2>
+  <p class="sec-sub">No credit card required. The free tier is actually useful.</p>
+  <div class="pricing">
+    <div class="plan">
+      <div class="plan-name">Free</div>
+      <div class="plan-price">$0</div>
+      <div class="plan-desc">Get started with SXO scoring</div>
+      <ul class="plan-features">
+        <li>SXO scoring on all posts</li>
+        <li>Schema.org auto-injection</li>
+        <li>3 AI-generated posts/month</li>
+        <li>Basic CRO9 tracking</li>
+        <li>Internal link suggestions</li>
+      </ul>
+      <a href="#" class="plan-btn plan-btn-ghost">Download Free</a>
+    </div>
+    <div class="plan pop">
+      <div class="plan-badge">Most Popular</div>
+      <div class="plan-name">Pro</div>
+      <div class="plan-price">$29<small>/mo</small></div>
+      <div class="plan-desc">Full SXO + CRO9 engine</div>
+      <ul class="plan-features">
+        <li>Everything in Free</li>
+        <li>Unlimited AI content generation</li>
+        <li>Full CRO9 conversion dashboard</li>
+        <li>Radial Burst distribution</li>
+        <li>Keyword gap analysis</li>
+        <li>Competitor content scoring</li>
+        <li>Priority support</li>
+      </ul>
+      <a href="#" class="plan-btn plan-btn-green">Get Pro — $29/mo</a>
+    </div>
+    <div class="plan">
+      <div class="plan-name">Agency</div>
+      <div class="plan-price">$99<small>/mo</small></div>
+      <div class="plan-desc">Unlimited sites + white label</div>
+      <ul class="plan-features">
+        <li>Everything in Pro</li>
+        <li>Unlimited WordPress sites</li>
+        <li>White-label dashboard</li>
+        <li>Client reporting</li>
+        <li>API access</li>
+        <li>Custom SXO templates</li>
+        <li>Dedicated account manager</li>
+      </ul>
+      <a href="#" class="plan-btn plan-btn-ghost">Contact Sales</a>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<section class="sec">
+  <div class="cta-section">
+    <h2>Stop Guessing.<br>Start <span class="grad">Ranking</span>.</h2>
+    <p>Every day without SXO is content that doesn't rank and traffic that doesn't convert. Install WP-SXO and change that today.</p>
+    <a href="#pricing" class="btn-lg btn-green">Download WP-SXO — Free</a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-left">WP<span>SXO</span> — by <a href="https://rocketopp.com" style="color:var(--text2)">RocketOpp LLC</a></div>
+    <div class="footer-links">
+      <a href="https://0ncore.com">0nCore</a>
+      <a href="https://0nmcp.com">0nMCP</a>
+      <a href="https://rocketopp.com">RocketOpp</a>
+      <a href="mailto:mike@rocketopp.com">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}</style>
+</body>
+</html>
