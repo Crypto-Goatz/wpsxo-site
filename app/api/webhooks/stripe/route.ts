@@ -1,0 +1,107 @@
+import Stripe from 'stripe';
+import { stripe } from '@/lib/stripe';
+import { provisionTrialAccount } from '@/lib/crm/provision';
+import { supabaseAdmin } from '@/lib/supabase';
+
+export async function POST(req: Request) {
+  const sig = req.headers.get('stripe-signature');
+  const body = await req.text();
+
+  if (!sig) {
+    return Response.json({ error: 'Missing signature' }, { status: 400 });
+  }
+
+  let event: Stripe.Event;
+  try {
+    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
+  } catch (err: any) {
+    console.error('[webhook] Invalid signature:', err.message);
+    return Response.json({ error: 'Invalid signature' }, { status: 400 });
+  }
+
+  try {
+    switch (event.type) {
+      case 'customer.subscription.created': {
+        const sub = event.data.object as Stripe.Subscription;
+
+        // Only provision on trial start
+        if (sub.status !== 'trialing') {
+          return Response.json({ received: true, action: 'skipped_not_trialing' });
+        }
+
+        // Duplicate guard
+        const { data: existing } = await supabaseAdmin
+          .from('trial_accounts')
+          .select('id')
+          .eq('stripe_customer_id', sub.customer as string)
+          .single();
+
+        if (existing) {
+          console.log('[webhook] Duplicate detected, skipping');
+          return Response.json({ received: true, action: 'skipped_duplicate' });
+        }
+
+        // Get customer details
+        const customer = await stripe.customers.retrieve(sub.customer as string) as Stripe.Customer;
+        const priceId = sub.items.data[0]?.price?.id || '';
+        const productSlug = sub.metadata?.product || customer.metadata?.product || 'wpsxo';
+
+        // Determine plan tier from price
+        let planTier: 'starter' | 'pro' | 'agency' = 'starter';
+        if (priceId.includes('fSj9vz4K')) planTier = 'agency';   // $99 WP-SXO
+        else if (priceId.includes('rvCWJ9R4')) planTier = 'pro';  // $49 OnPress
+
+        await provisionTrialAccount({
+          stripeCustomerId: customer.id,
+          stripeSubscriptionId: sub.id,
+          email: customer.email!,
+          firstName: customer.metadata?.first_name || customer.name?.split(' ')[0] || '',
+          lastName: customer.metadata?.last_name || customer.name?.split(' ').slice(1).join(' ') || '',
+          companyName: customer.metadata?.company_name || customer.name || customer.email!,
+          phone: customer.phone || customer.metadata?.phone,
+          planTier,
+          priceId,
+          source: 'wpsxo',
+        });
+
+        console.log(`[webhook] Provisioned: ${customer.email} (${planTier})`);
+        break;
+      }
+
+      case 'customer.subscription.updated': {
+        const sub = event.data.object as Stripe.Subscription;
+        if (sub.status === 'active') {
+          // Trial converted to paid
+          await supabaseAdmin
+            .from('trial_accounts')
+            .update({
+              status: 'active',
+              converted_at: new Date().toISOString(),
+            })
+            .eq('stripe_customer_id', sub.customer as string);
+
+          console.log(`[webhook] Converted: ${sub.customer}`);
+        }
+        break;
+      }
+
+      case 'customer.subscription.deleted': {
+        const sub = event.data.object as Stripe.Subscription;
+        await supabaseAdmin
+          .from('trial_accounts')
+          .update({
+            status: 'cancelled',
+          })
+          .eq('stripe_customer_id', sub.customer as string);
+
+        console.log(`[webhook] Cancelled: ${sub.customer}`);
+        break;
+      }
+    }
+  } catch (err: any) {
+    console.error('[webhook] Error:', err.message);
+    return Response.json({ error: 'Processing failed' }, { status: 500 });
+  }
+
+  return Response.json({ received: true });
+}

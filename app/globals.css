@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+:root {
+  --accent: #7ed957;
+  --accent-dim: #5cb83a;
+  --accent-glow: rgba(126, 217, 87, 0.15);
+  --secondary: #00d4ff;
+  --tertiary: #a78bfa;
+  --bg-primary: #0A0E17;
+  --bg-card: #111827;
+  --bg-card-hover: #1a2332;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border: #1e293b;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { opacity: 0.85; }
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+  color: #0A0E17;
+  font-weight: 700;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 15px;
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px var(--accent-glow); }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: transparent;
+  color: var(--text-primary);
+  font-weight: 600;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 15px;
+}
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.2s;
+}
+.card:hover { border-color: var(--accent); background: var(--bg-card-hover); }
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.badge-green { background: rgba(126, 217, 87, 0.15); color: var(--accent); }
+.badge-purple { background: rgba(167, 139, 250, 0.15); color: var(--tertiary); }
+.badge-cyan { background: rgba(0, 212, 255, 0.15); color: var(--secondary); }
+.badge-free { background: rgba(255,255,255,0.08); color: var(--text-secondary); }
