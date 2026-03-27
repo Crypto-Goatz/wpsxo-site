@@ -26,16 +26,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           maxWidth: 1200,
           margin: '0 auto',
         }}>
-          <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--text-primary)', fontWeight: 800, fontSize: 18 }}>
-            <span style={{
-              width: 34, height: 34,
-              background: 'linear-gradient(135deg, #2dd4bf, #8b5cf6)',
-              borderRadius: 9,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontWeight: 900, fontSize: 11, color: '#fff',
-              letterSpacing: '-0.02em',
-            }}>WP</span>
-            <span>SXO</span>
+          <a href="/" style={{ display: 'flex', alignItems: 'center' }}>
+            <img src="/brand/wpsxo-logo.png" alt="WP-SXO" style={{ height: 36 }} />
           </a>
           <div style={{ display: 'flex', gap: 24, alignItems: 'center', fontSize: 14 }}>
             <a href="/products/onpress" style={{ color: 'var(--text-secondary)' }}>OnPress</a>
