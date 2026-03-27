@@ -28,13 +28,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         }}>
           <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--text-primary)', fontWeight: 800, fontSize: 18 }}>
             <span style={{
-              width: 32, height: 32,
-              background: 'linear-gradient(135deg, #7ed957, #5cb83a)',
-              borderRadius: 8,
+              width: 34, height: 34,
+              background: 'linear-gradient(135deg, #2dd4bf, #8b5cf6)',
+              borderRadius: 9,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontWeight: 900, fontSize: 13, color: '#0A0E17',
-            }}>0n</span>
-            WP-SXO
+              fontWeight: 900, fontSize: 11, color: '#fff',
+              letterSpacing: '-0.02em',
+            }}>WP</span>
+            <span>SXO</span>
           </a>
           <div style={{ display: 'flex', gap: 24, alignItems: 'center', fontSize: 14 }}>
             <a href="/products/onpress" style={{ color: 'var(--text-secondary)' }}>OnPress</a>
@@ -54,7 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         }}>
           <p>&copy; 2026 RocketOpp LLC. All rights reserved.</p>
           <p style={{ marginTop: 8 }}>
-            <a href="https://0nmcp.com" style={{ color: 'var(--text-muted)' }}>0nMCP</a>
+            <a href="https://0nmcp.com" style={{ color: 'var(--text-muted)' }}>Powered by 0nMCP</a>
             {' · '}
             <a href="https://rocketopp.com" style={{ color: 'var(--text-muted)' }}>RocketOpp</a>
             {' · '}

@@ -29,7 +29,7 @@ export const PRODUCTS: Product[] = [
     tagline: 'Figma to WordPress — First Ever',
     description: 'Convert Figma designs into complete WordPress themes and plugins. Extract design tokens, generate production-ready code, and download a ready-to-install ZIP. The first-ever Figma to WordPress plugin converter.',
     badge: 'NEW',
-    badgeClass: 'badge-green',
+    badgeClass: 'badge-teal',
     icon: '🎨',
     features: [
       'Figma design token extraction (colors, typography, spacing, effects)',
