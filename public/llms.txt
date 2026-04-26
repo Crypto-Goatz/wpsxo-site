@@ -1,0 +1,98 @@
+# WP-SXO — AI Content Engine for WordPress
+
+> Two WordPress plugins sold from wpsxo.com. WP-SXO scores and rewrites your content using Search Experience Optimization (SXO) methodology. OnPress converts Figma designs into deployable WordPress themes and plugins.
+
+**Products:** WP-SXO Plugin · OnPress Plugin
+**Vendor:** RocketOpp LLC
+**Domain:** wpsxo.com
+
+---
+
+## Plugin #1 — WP-SXO
+
+> AI content scoring + rewriting plugin for WordPress. The "SXO score" rates every page across 8 dimensions (BLUF, header depth, information gain, table trap, readability, schema markup, internal links, content length). The Pro/Agency tiers add AI rewriting via the connected AI council.
+
+### What it scores
+1. **BLUF** (20% weight) — does the first paragraph answer the question?
+2. **Header Depth** (15%) — H1 → H2 → H3 hierarchy enforced
+3. **Information Gain** (15%) — data, statistics, examples, case studies
+4. **Table Trap** (10%) — comparison tables, ordered lists, FAQ-style headers
+5. **Readability** (15%) — sentence length, active voice, transitions
+6. **Schema Markup** (10%) — auto-injected JSON-LD (Article, FAQPage, HowTo, LocalBusiness)
+7. **Internal Links** (5%) — 2–3 site-internal + 1 external authority
+8. **Content Length** (10%) — 1,200–1,800 words for posts, 800–1,200 for landings
+
+### Tiers
+
+| Tier | Price | Sites | Features |
+|------|-------|-------|----------|
+| **Free** | $0 | 1 | Basic scoring, manual recommendations |
+| **Pro** | $49/year | 3 | Full scoring + AI rewriting + CRM account |
+| **Agency** | $99/year | Unlimited | White-label + API access + bulk operations |
+| **Max** | Custom | Unlimited | Auto-rewrite stale content, /fix command |
+
+### Integration
+
+WP-SXO exposes a REST API namespace `/wp-json/oncore/v1/` on every site:
+
+```
+GET  /wp-json/oncore/v1/site-info
+GET  /wp-json/oncore/v1/content
+POST /wp-json/oncore/v1/pages
+POST /wp-json/oncore/v1/posts
+GET  /wp-json/oncore/v1/sxo/score/{id}
+POST /wp-json/oncore/v1/sxo/score
+GET  /wp-json/oncore/v1/sxo/health
+```
+
+Auth header: `X-OnCore-License: WPSXO-XXXX-XXXX-XXXX-XXXX`
+
+Free download: https://wpsxo.com/api/downloads/free?product=wpsxo
+Releases: https://github.com/Crypto-Goatz/onpress-wp/releases
+
+---
+
+## Plugin #2 — OnPress
+
+> Figma → WordPress converter. Paste a Figma file URL, get back a deployable WordPress theme or plugin in 30 seconds. Handles Beaver Builder, Elementor, and native Gutenberg blocks.
+
+**Price:** $49/year (single license, unlimited sites)
+
+### What it converts
+
+- Figma frames → WordPress page templates
+- Figma component variants → reusable Gutenberg blocks
+- Figma auto-layout → CSS Grid + Flexbox
+- Figma color/text styles → theme.json design tokens
+- Figma asset library → /wp-content/uploads/
+
+### Builder support
+
+| Builder | Status |
+|---------|:------:|
+| Native Gutenberg | ✓ |
+| Beaver Builder | ✓ (modules + nodes) |
+| Elementor | ✓ (JSON layout) |
+| Divi | Roadmap |
+| Bricks | Roadmap |
+
+---
+
+## Stack
+
+Next.js 16.2.1 · React 19.2.4 · Supabase · Stripe (subscriptions + checkout) · Tailwind v4
+
+## Important Pages
+
+- / — Landing (both products promoted)
+- /products/wpsxo — WP-SXO product detail + pricing
+- /products/onpress — OnPress product detail + pricing
+- /login, /signup — Auth
+
+## Sitemap
+
+https://wpsxo.com/sitemap.xml
+
+## Contact
+
+mike@rocketopp.com — RocketOpp LLC
