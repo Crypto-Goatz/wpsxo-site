@@ -46,6 +46,12 @@ export default function RootLayout({
                 OnPress
               </a>
               <a
+                href="/products/detect-and-refine"
+                className="hidden md:inline text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+              >
+                D&amp;R
+              </a>
+              <a
                 href="/pricing"
                 className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
               >
@@ -91,6 +97,14 @@ export default function RootLayout({
                     className="hover:text-[var(--text-primary)]"
                   >
                     OnPress
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/products/detect-and-refine"
+                    className="hover:text-[var(--text-primary)]"
+                  >
+                    Detect &amp; Refine
                   </a>
                 </li>
                 <li>

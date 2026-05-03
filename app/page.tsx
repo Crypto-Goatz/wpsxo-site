@@ -1,6 +1,7 @@
 import {
   Search,
   Palette,
+  ShieldCheck,
   Check,
   Zap,
   Infinity as InfinityIcon,
@@ -17,6 +18,7 @@ import { PRODUCTS, BUNDLE } from '@/lib/products'
 const ICON_MAP: Record<string, typeof Search> = {
   Search,
   Palette,
+  ShieldCheck,
 }
 
 function accentClass(accent: string, kind: 'text' | 'bg' | 'badge') {
@@ -52,10 +54,13 @@ export default function Home() {
           .
         </h1>
         <p className="text-lg text-[var(--text-secondary)] max-w-2xl mx-auto mb-8 leading-relaxed">
-          Two plugins for the new playbook. <strong className="text-[var(--text-primary)]">WP-SXO</strong>{' '}
-          scores your content for AI search visibility.{' '}
+          Three plugins for the new playbook.{' '}
+          <strong className="text-[var(--text-primary)]">WP-SXO</strong> scores your
+          content for AI search visibility.{' '}
           <strong className="text-[var(--text-primary)]">OnPress</strong> turns your
-          Figma file into a real WordPress theme. Lifetime licenses. Lifetime updates.
+          Figma file into a real WordPress theme.{' '}
+          <strong className="text-[var(--text-primary)]">Detect & Refine</strong>{' '}
+          grades every ad click and trains your ad platforms automatically.
         </p>
         <div className="flex flex-wrap gap-3 justify-center mb-3">
           <a href="#founder-pricing" className="btn-warn">
@@ -95,13 +100,13 @@ export default function Home() {
         ))}
       </section>
 
-      {/* ── The two plugins ───────────────────────────────── */}
+      {/* ── The three plugins ─────────────────────────────── */}
       <section id="products" className="pb-14">
-        <h2 className="text-3xl font-bold mb-3 text-center">The two plugins</h2>
+        <h2 className="text-3xl font-bold mb-3 text-center">The three plugins</h2>
         <p className="text-[var(--text-secondary)] text-center mb-10 max-w-xl mx-auto">
-          Each does one job, ships real code, and never expires.
+          Each does one job. Each ships real code.
         </p>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {PRODUCTS.map((product) => {
             const Icon = ICON_MAP[product.icon] || Search
             const popular =
@@ -150,7 +155,12 @@ export default function Home() {
                       Founder pricing from
                     </p>
                     <p className="text-2xl font-extrabold text-[var(--text-primary)]">
-                      ${product.prices[0].amount}{' '}
+                      ${product.prices[0].amount}
+                      {product.prices[0].interval && (
+                        <span className="text-sm font-medium text-[var(--text-muted)]">
+                          /{product.prices[0].interval === 'month' ? 'mo' : 'yr'}
+                        </span>
+                      )}{' '}
                       {product.prices[0].compareAt && (
                         <span className="text-sm font-normal text-[var(--text-muted)] line-through">
                           ${product.prices[0].compareAt}
@@ -235,7 +245,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-5">
+        <div className="grid md:grid-cols-3 gap-5">
           {PRODUCTS.map((product) => (
             <div key={product.slug} className="card">
               <div className="flex items-center justify-between mb-1">

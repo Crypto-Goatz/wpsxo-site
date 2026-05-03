@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import {
   Search,
   Palette,
+  ShieldCheck,
   Check,
   Flame,
   ArrowRight,
@@ -16,7 +17,7 @@ export function generateStaticParams() {
   return PRODUCTS.map((p) => ({ slug: p.slug }))
 }
 
-const ICON_MAP: Record<string, typeof Search> = { Search, Palette }
+const ICON_MAP: Record<string, typeof Search> = { Search, Palette, ShieldCheck }
 
 function accentClass(accent: string, kind: 'text' | 'badge' | 'gridIcon') {
   if (kind === 'text') {

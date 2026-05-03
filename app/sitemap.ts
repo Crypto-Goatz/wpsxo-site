@@ -16,6 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/pricing`,                                 lastModified: now, changeFrequency: 'weekly',  priority: 0.95 },
     { url: `${BASE}/products/wpsxo`,                          lastModified: now, changeFrequency: 'weekly',  priority: 0.95 },
     { url: `${BASE}/products/onpress`,                        lastModified: now, changeFrequency: 'weekly',  priority: 0.90 },
+    { url: `${BASE}/products/detect-and-refine`,              lastModified: now, changeFrequency: 'weekly',  priority: 0.95 },
     { url: `${BASE}/seo-is-dead`,                             lastModified: now, changeFrequency: 'monthly', priority: 0.85 },
     { url: `${BASE}/how-to-sell-figma-wordpress-themes`,      lastModified: now, changeFrequency: 'monthly', priority: 0.85 },
     { url: `${BASE}/login`,                                   lastModified: now, changeFrequency: 'monthly', priority: 0.50 },

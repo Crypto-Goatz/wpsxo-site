@@ -5,6 +5,7 @@ import {
   ArrowRight,
   Wallet,
   Infinity as InfinityIcon,
+  ShieldCheck,
 } from 'lucide-react'
 
 interface CompetitorRow {
@@ -36,6 +37,29 @@ interface FigmaRow {
   bricks: string | boolean
   webflow: string | boolean
 }
+
+interface DrRow {
+  feature: string
+  dr: string | boolean
+  clickcease: string | boolean
+  cheq: string | boolean
+  lunio: string | boolean
+}
+
+const DR_COMPARISON: DrRow[] = [
+  { feature: 'Pricing', dr: '$8/domain/mo', clickcease: '$79–189/mo', cheq: 'Enterprise only', lunio: '$49–299/mo' },
+  { feature: '12-month cost (1 domain)', dr: '$96', clickcease: '$948–2,268', cheq: 'Custom', lunio: '$588–3,588' },
+  { feature: 'Behavioral grading (30+ signals)', dr: true, clickcease: 'Click-only', cheq: 'Enterprise', lunio: 'Limited' },
+  { feature: 'Letter grades (A+ → F)', dr: true, clickcease: false, cheq: 'Custom', lunio: false },
+  { feature: 'Google Ads conversion API feedback', dr: true, clickcease: true, cheq: true, lunio: true },
+  { feature: 'Meta Conversions API feedback', dr: true, clickcease: false, cheq: true, lunio: true },
+  { feature: 'LinkedIn Offline Conversions API', dr: true, clickcease: false, cheq: 'Enterprise', lunio: false },
+  { feature: 'TikTok Events API feedback', dr: true, clickcease: false, cheq: 'Enterprise', lunio: false },
+  { feature: 'Works on GHL / LeadConnector sites', dr: true, clickcease: false, cheq: false, lunio: false },
+  { feature: 'WordPress plugin', dr: true, clickcease: true, cheq: false, lunio: false },
+  { feature: 'Unlimited traffic', dr: true, clickcease: 'Tiered', cheq: 'Tiered', lunio: 'Tiered' },
+  { feature: 'Privacy-first (no cookies, no PII)', dr: true, clickcease: 'Cookies', cheq: 'Cookies', lunio: 'Cookies' },
+]
 
 const FIGMA_COMPARISON: FigmaRow[] = [
   { feature: 'Pricing model', onpress: 'Lifetime $147 once', pinegrow: '$199/yr forever', bricks: '$99/yr (or $299 lifetime, no Figma input)', webflow: '$23/mo + dev cost' },
@@ -79,8 +103,8 @@ export default function PricingPage() {
           {[
             { label: 'WP-SXO Solo', value: '$97', sub: 'lifetime' },
             { label: 'OnPress Solo', value: '$147', sub: 'lifetime' },
-            { label: 'Bundle', value: '$397', sub: 'both, lifetime', highlight: true },
-            { label: 'Studio', value: 'from $497', sub: 'agency-grade' },
+            { label: 'D&R', value: '$8/mo', sub: 'per domain · 30-day trial' },
+            { label: 'Bundle', value: '$397', sub: 'both lifetime plugins', highlight: true },
           ].map((p, i) => (
             <div
               key={i}
@@ -226,6 +250,75 @@ export default function PricingPage() {
                   </td>
                   <td className="py-3 px-3 text-center text-[var(--text-secondary)]">
                     <CellValue v={row.webflow} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* ── D&R comparison ────────────────────────────────── */}
+      <section className="mb-16">
+        <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
+          <div>
+            <h2 className="text-2xl font-bold flex items-center gap-2">
+              <ShieldCheck className="w-6 h-6 text-[var(--tertiary)]" />
+              Detect & Refine vs the click-fraud incumbents
+            </h2>
+            <p className="text-sm text-[var(--text-muted)] mt-1">
+              10–25× cheaper. Grades every click on a quality spectrum, not just fraud.
+            </p>
+          </div>
+          <a
+            href="/products/detect-and-refine#pricing"
+            className="btn-primary"
+          >
+            Try D&R free for 30 days
+            <ArrowRight className="w-4 h-4" />
+          </a>
+        </div>
+        <div className="card overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-[var(--border)]">
+                <th className="text-left py-3 px-3 text-[var(--text-muted)] font-bold uppercase tracking-wider text-xs">
+                  Feature
+                </th>
+                <th className="py-3 px-3 text-center text-[var(--tertiary)] font-extrabold">
+                  Detect & Refine
+                </th>
+                <th className="py-3 px-3 text-center text-[var(--text-muted)] font-bold">
+                  ClickCease
+                </th>
+                <th className="py-3 px-3 text-center text-[var(--text-muted)] font-bold">
+                  CHEQ
+                </th>
+                <th className="py-3 px-3 text-center text-[var(--text-muted)] font-bold">
+                  Lunio
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {DR_COMPARISON.map((row, i) => (
+                <tr
+                  key={i}
+                  className="border-b border-[var(--border)] last:border-0"
+                >
+                  <td className="py-3 px-3 text-[var(--text-primary)] font-semibold">
+                    {row.feature}
+                  </td>
+                  <td className="py-3 px-3 text-center bg-[var(--tertiary-glow)] text-[var(--text-primary)] font-semibold">
+                    <CellValue v={row.dr} />
+                  </td>
+                  <td className="py-3 px-3 text-center text-[var(--text-secondary)]">
+                    <CellValue v={row.clickcease} />
+                  </td>
+                  <td className="py-3 px-3 text-center text-[var(--text-secondary)]">
+                    <CellValue v={row.cheq} />
+                  </td>
+                  <td className="py-3 px-3 text-center text-[var(--text-secondary)]">
+                    <CellValue v={row.lunio} />
                   </td>
                 </tr>
               ))}
