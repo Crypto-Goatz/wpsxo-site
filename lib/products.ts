@@ -69,7 +69,7 @@ export const PRODUCTS: Product[] = [
     ],
     prices: [
       {
-        id: 'price_wpsxo_founder_solo',
+        id: 'price_1TT5C0LENnHWT4tVOYpzOMwC',
         label: 'Founder Solo',
         amount: 97,
         compareAt: 297,
@@ -82,7 +82,7 @@ export const PRODUCTS: Product[] = [
         founderSeats: 100,
       },
       {
-        id: 'price_wpsxo_founder_agency',
+        id: 'price_1TT5C0LENnHWT4tVDGYzxMDg',
         label: 'Founder Agency',
         amount: 297,
         compareAt: 997,
@@ -98,7 +98,7 @@ export const PRODUCTS: Product[] = [
         founderSeats: 50,
       },
       {
-        id: 'price_wpsxo_founder_studio',
+        id: 'price_1TT5C1LENnHWT4tVUmIbpvHF',
         label: 'Founder Studio',
         amount: 497,
         compareAt: 1997,
@@ -113,7 +113,7 @@ export const PRODUCTS: Product[] = [
         founderSeats: 25,
       },
     ],
-    stripeProductId: 'prod_UDK3OAMMlDeOra',
+    stripeProductId: 'prod_URzAp6T3rDu0WN',
     githubRepo: 'Crypto-Goatz/wpsxo-plugin',
     downloadFileName: 'wpsxo.zip',
     category: 'seo',
@@ -173,7 +173,7 @@ export const PRODUCTS: Product[] = [
     ],
     prices: [
       {
-        id: 'price_dr_per_domain_monthly',
+        id: 'price_1TT5C3LENnHWT4tV1ZYsRP25',
         label: 'Per Domain',
         amount: 8,
         compareAt: 79,
@@ -190,7 +190,7 @@ export const PRODUCTS: Product[] = [
         founderSeats: 250,
       },
     ],
-    stripeProductId: 'prod_dr_universal_tracking',
+    stripeProductId: 'prod_URzAxq1uTWNwAe',
     githubRepo: 'Crypto-Goatz/detect-and-refine-wp',
     downloadFileName: 'detect-and-refine.zip',
     category: 'seo',
@@ -255,7 +255,7 @@ export const PRODUCTS: Product[] = [
     ],
     prices: [
       {
-        id: 'price_onpress_founder_solo',
+        id: 'price_1TT5C2LENnHWT4tV3o7ruThm',
         label: 'Founder Solo',
         amount: 147,
         compareAt: 397,
@@ -268,7 +268,7 @@ export const PRODUCTS: Product[] = [
         founderSeats: 100,
       },
       {
-        id: 'price_onpress_founder_studio',
+        id: 'price_1TT5C2LENnHWT4tVZnia9dkj',
         label: 'Founder Studio',
         amount: 497,
         compareAt: 1497,
@@ -284,7 +284,7 @@ export const PRODUCTS: Product[] = [
         founderSeats: 25,
       },
     ],
-    stripeProductId: 'prod_UDougubvysD7gQ',
+    stripeProductId: 'prod_URzA9GrvYQguxF',
     githubRepo: 'Crypto-Goatz/onpress',
     downloadFileName: 'onpress-wp.zip',
     category: 'figma',
@@ -325,7 +325,8 @@ export const BUNDLE = {
   tagline: 'WP-SXO + OnPress, lifetime, both updated forever.',
   amount: 397,
   compareAt: 1294,
-  priceId: 'price_founder_bundle',
+  priceId: 'price_1TT5C3LENnHWT4tVmQdo40sC',
+  stripeProductId: 'prod_URzAw2Vjs77KOE',
   features: [
     'WP-SXO Founder Agency (25 sites)',
     'OnPress Founder Studio (white-label, 5 designers)',

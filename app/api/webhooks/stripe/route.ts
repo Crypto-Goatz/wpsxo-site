@@ -21,6 +21,50 @@ export async function POST(req: Request) {
 
   try {
     switch (event.type) {
+      case 'checkout.session.completed': {
+        const session = event.data.object as Stripe.Checkout.Session
+        // Subscriptions arrive separately via customer.subscription.created.
+        // Only act here for one-time payments (lifetime products).
+        if (session.mode !== 'payment') {
+          return Response.json({ received: true, action: 'skipped_not_payment' })
+        }
+        const productSlug = session.metadata?.product || ''
+        const priceId = session.metadata?.price_id || ''
+        const email =
+          session.customer_details?.email || session.customer_email || ''
+        const name = session.customer_details?.name || ''
+        const amountTotal = (session.amount_total ?? 0) / 100
+
+        console.log(
+          `[webhook] lifetime purchase — ${email} bought ${productSlug} ($${amountTotal}) price=${priceId}`,
+        )
+
+        // Idempotent: if already logged, skip
+        const { data: existing } = await supabaseAdmin
+          .from('lifetime_purchases')
+          .select('id')
+          .eq('stripe_session_id', session.id)
+          .maybeSingle()
+        if (existing) {
+          return Response.json({ received: true, action: 'skipped_duplicate' })
+        }
+
+        await supabaseAdmin.from('lifetime_purchases').insert({
+          stripe_session_id: session.id,
+          stripe_customer_id: (session.customer as string) || null,
+          stripe_payment_intent_id: (session.payment_intent as string) || null,
+          email,
+          name,
+          product_slug: productSlug,
+          price_id: priceId,
+          amount_total_cents: session.amount_total ?? 0,
+          currency: session.currency || 'usd',
+          status: 'paid',
+          metadata: session.metadata as Record<string, string> | null,
+        })
+        break
+      }
+
       case 'customer.subscription.created': {
         const sub = event.data.object as Stripe.Subscription;
 
