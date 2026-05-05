@@ -1,24 +1,26 @@
-import { createClient } from '@supabase/supabase-js';
+import { NextRequest } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 
-export async function POST(req: Request) {
-  const { email, password } = await req.json();
+export const runtime = 'nodejs'
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+export async function POST(req: NextRequest) {
+  const { email, password } = await req.json()
+  if (!email || !password) {
+    return Response.json({ error: 'Email and password required' }, { status: 400 })
+  }
 
-  const { data, error } = await supabase.auth.signUp({
+  const supabase = await createClient()
+  const { error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`,
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'https://wpsxo.com'}/dashboard`,
     },
-  });
+  })
 
   if (error) {
-    return Response.json({ error: error.message }, { status: 400 });
+    return Response.json({ error: error.message }, { status: 400 })
   }
 
-  return Response.json({ user: data.user });
+  return Response.json({ ok: true })
 }
