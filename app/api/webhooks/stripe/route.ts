@@ -2,6 +2,7 @@ import Stripe from 'stripe';
 import { stripe } from '@/lib/stripe';
 import { provisionTrialAccount } from '@/lib/crm/provision';
 import { supabaseAdmin } from '@/lib/supabase';
+import { createLicenseForPurchase } from '@/lib/license';
 
 export async function POST(req: Request) {
   const sig = req.headers.get('stripe-signature');
@@ -49,19 +50,51 @@ export async function POST(req: Request) {
           return Response.json({ received: true, action: 'skipped_duplicate' })
         }
 
-        await supabaseAdmin.from('lifetime_purchases').insert({
-          stripe_session_id: session.id,
-          stripe_customer_id: (session.customer as string) || null,
-          stripe_payment_intent_id: (session.payment_intent as string) || null,
-          email,
-          name,
-          product_slug: productSlug,
-          price_id: priceId,
-          amount_total_cents: session.amount_total ?? 0,
-          currency: session.currency || 'usd',
-          status: 'paid',
-          metadata: session.metadata as Record<string, string> | null,
-        })
+        const { data: purchase, error: purchaseErr } = await supabaseAdmin
+          .from('lifetime_purchases')
+          .insert({
+            stripe_session_id: session.id,
+            stripe_customer_id: (session.customer as string) || null,
+            stripe_payment_intent_id: (session.payment_intent as string) || null,
+            email,
+            name,
+            product_slug: productSlug,
+            price_id: priceId,
+            amount_total_cents: session.amount_total ?? 0,
+            currency: session.currency || 'usd',
+            status: 'paid',
+            metadata: session.metadata as Record<string, string> | null,
+          })
+          .select('id')
+          .single()
+
+        if (purchaseErr) {
+          console.error('[webhook] insert lifetime_purchases failed:', purchaseErr)
+          break
+        }
+
+        // Mint a real license key for this purchase.
+        try {
+          const license = await createLicenseForPurchase({
+            email,
+            productSlug,
+            purchaseId: purchase.id as string,
+            priceId,
+            metadata: {
+              stripe_session_id: session.id,
+              amount_total_cents: session.amount_total ?? 0,
+              promo_code:
+                (session.total_details?.breakdown?.discounts?.[0]?.discount?.promotion_code as
+                  | string
+                  | undefined) || null,
+            },
+          })
+          console.log(
+            `[webhook] minted ${license.key} for ${email} → ${productSlug}`,
+          )
+        } catch (e) {
+          console.error('[webhook] license mint failed:', (e as Error).message)
+        }
         break
       }
 

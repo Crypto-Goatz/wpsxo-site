@@ -19,8 +19,23 @@
 import Link from 'next/link'
 import { supabaseAdmin } from '@/lib/supabase'
 import { createClient } from '@/lib/supabase/server'
-import { CheckCircle2, Download, ExternalLink, Sparkles, LogOut } from 'lucide-react'
+import {
+  CheckCircle2,
+  Download,
+  ExternalLink,
+  Sparkles,
+  LogOut,
+  Key,
+  Monitor,
+} from 'lucide-react'
 import MagicLinkForm from './magic-link-form'
+import LicenseKeyCopy from './license-key-copy'
+import {
+  findLicensesByEmail,
+  listActivations,
+  type License,
+  type LicenseActivation,
+} from '@/lib/license'
 
 export const dynamic = 'force-dynamic'
 
@@ -161,12 +176,27 @@ export default async function DashboardPage({
   // ── If we have an email, load EVERYTHING for that customer ──────
   let allPurchases: PurchaseRow[] = []
   let trials: TrialRow[] = []
+  let licenses: License[] = []
+  let activationsByLicense: Record<string, LicenseActivation[]> = {}
+
   if (identifyingEmail) {
-    ;[allPurchases, trials] = await Promise.all([
+    ;[allPurchases, trials, licenses] = await Promise.all([
       getPurchasesByEmail(identifyingEmail),
       getTrialsByEmail(identifyingEmail),
+      findLicensesByEmail(identifyingEmail),
     ])
+
+    if (licenses.length > 0) {
+      const acts = await Promise.all(licenses.map((l) => listActivations(l.id)))
+      activationsByLicense = Object.fromEntries(
+        licenses.map((l, i) => [l.id, acts[i]]),
+      )
+    }
   }
+
+  const licensesByProduct: Record<string, License | undefined> = Object.fromEntries(
+    licenses.map((l) => [l.product_slug, l]),
+  )
 
   // ── Render: anonymous fallback ──────────────────────────────────
   if (!identifyingEmail) {
@@ -223,6 +253,22 @@ export default async function DashboardPage({
               </p>
             </div>
           </div>
+
+          {licensesByProduct[heroPurchase.product_slug] && (
+            <div className="mb-4">
+              <div className="text-xs uppercase tracking-wider text-[var(--text-muted)] mb-2 flex items-center gap-1.5">
+                <Key className="w-3 h-3" /> Your license key
+              </div>
+              <LicenseKeyCopy
+                licenseKey={licensesByProduct[heroPurchase.product_slug]!.key}
+              />
+              <p className="text-xs text-[var(--text-muted)] mt-2">
+                Save this — you&apos;ll paste it into the plugin&apos;s settings
+                screen to activate. Also emailed to you.
+              </p>
+            </div>
+          )}
+
           {PRODUCTS[heroPurchase.product_slug].downloadUrl && (
             <a
               href={PRODUCTS[heroPurchase.product_slug].downloadUrl}
@@ -309,6 +355,68 @@ export default async function DashboardPage({
           </ul>
         )}
       </section>
+
+      {/* License keys + active sites */}
+      {licenses.length > 0 && (
+        <section className="card mb-6">
+          <h2 className="text-lg font-bold mb-1 flex items-center gap-2">
+            <Key className="w-4 h-4" /> License keys
+          </h2>
+          <p className="text-sm text-[var(--text-muted)] mb-4">
+            Paste these into the plugin or extension settings to activate.
+            Lifetime keys never expire. Each key shows the active sites/installs
+            using it.
+          </p>
+          <ul className="space-y-5">
+            {licenses.map((license) => {
+              const meta = PRODUCTS[license.product_slug]
+              const acts = activationsByLicense[license.id] || []
+              const activeActs = acts.filter((a) => a.status === 'active')
+              const seatsLabel =
+                license.max_seats >= 9999 ? 'Unlimited sites' : `${activeActs.length} of ${license.max_seats} sites`
+              return (
+                <li
+                  key={license.id}
+                  className="border-t border-[var(--border)] pt-4 first:border-t-0 first:pt-0"
+                >
+                  <div className="flex items-center justify-between gap-4 mb-2">
+                    <div>
+                      <div className="font-semibold text-sm">
+                        {meta?.name || license.product_slug}
+                      </div>
+                      <div className="text-xs text-[var(--text-muted)]">
+                        Issued {fmtDate(license.created_at)} · {seatsLabel}
+                      </div>
+                    </div>
+                    <span className="text-xs uppercase tracking-wider text-emerald-400">
+                      {license.status}
+                    </span>
+                  </div>
+                  <LicenseKeyCopy licenseKey={license.key} />
+                  {activeActs.length > 0 && (
+                    <ul className="mt-3 space-y-1">
+                      {activeActs.map((a) => (
+                        <li
+                          key={a.id}
+                          className="flex items-center gap-2 text-xs text-[var(--text-muted)]"
+                        >
+                          <Monitor className="w-3 h-3 shrink-0" />
+                          <span className="truncate flex-1">
+                            {a.site_url || a.fingerprint || 'Activated install'}
+                          </span>
+                          <span className="shrink-0">
+                            since {fmtDate(a.activated_at)}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              )
+            })}
+          </ul>
+        </section>
+      )}
 
       {/* Subscriptions (trials / recurring) — only renders when relevant */}
       {trials.length > 0 && (
