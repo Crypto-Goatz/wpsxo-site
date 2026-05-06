@@ -55,13 +55,25 @@ export async function getProfileByToken(
   token: string,
 ): Promise<ProfileWithCredits | null> {
   if (!token?.startsWith('0n_')) return null
-  const { data } = await supabaseAdmin
+  const { data, error } = await supabaseAdmin
     .from('profiles')
     .select(
       'id, email, access_token, credits_balance, plan, plan_renews_at, plan_status, last_credit_refresh_at',
     )
     .eq('access_token', token)
     .maybeSingle()
+  if (error) {
+    console.error('[credits.getProfileByToken] error:', error.message, error.code, error.details)
+    return null
+  }
+  if (!data) {
+    console.warn(
+      '[credits.getProfileByToken] no profile for token starting:',
+      token.slice(0, 8),
+      '— url:',
+      process.env.NEXT_PUBLIC_SUPABASE_URL?.slice(8, 25),
+    )
+  }
   return (data as ProfileWithCredits | null) || null
 }
 
