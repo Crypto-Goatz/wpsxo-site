@@ -46,6 +46,8 @@ const MANIFESTS: Record<string, Manifest> = {
     github: 'Crypto-Goatz/detect-and-refine-wp',
     asset: 'detect-and-refine.zip',
   },
+  // 0n Chrome Extension — every signed-in 0n user gets it free.
+  '0n-extension': { github: '0nork/0n-extension', asset: '0n-extension.zip' },
 }
 
 async function isOwner(args: {
@@ -53,6 +55,10 @@ async function isOwner(args: {
   email?: string | null
   sessionId?: string | null
 }): Promise<boolean> {
+  // The 0n Chrome Extension is free for any signed-in user — that's the
+  // funnel. Just having a 0n_ token / supabase session is enough.
+  if (args.product === '0n-extension' && args.email) return true
+
   // Path A — fresh checkout link (session_id in URL right after purchase)
   if (args.sessionId) {
     const { data } = await supabaseAdmin

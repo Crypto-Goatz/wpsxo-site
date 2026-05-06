@@ -27,6 +27,7 @@ import {
   LogOut,
   Key,
   Monitor,
+  Puzzle,
 } from 'lucide-react'
 import MagicLinkForm from './magic-link-form'
 import LicenseKeyCopy from './license-key-copy'
@@ -38,6 +39,36 @@ import {
 } from '@/lib/license'
 
 export const dynamic = 'force-dynamic'
+
+interface VersionInfo {
+  product: string
+  version: string | null
+  released_at: string | null
+  available: boolean
+}
+
+async function fetchLatestVersions(): Promise<Record<string, VersionInfo>> {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://wpsxo.com'
+    const res = await fetch(`${baseUrl}/api/products/versions`, {
+      next: { revalidate: 60 },
+    })
+    if (!res.ok) return {}
+    const data = (await res.json()) as { products: VersionInfo[] }
+    return Object.fromEntries(data.products.map((p) => [p.product, p]))
+  } catch {
+    return {}
+  }
+}
+
+function fmtRelease(iso: string | null): string {
+  if (!iso) return ''
+  return new Date(iso).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })
+}
 
 interface PurchaseRow {
   id: string
@@ -204,6 +235,11 @@ export default async function DashboardPage({
     licenses.map((l) => [l.product_slug, l]),
   )
 
+  // Live versions — pulled from GitHub releases on every dashboard render
+  // (60s cache). Means whenever a new release ships, this page reflects it
+  // automatically. No hardcoded version strings to drift.
+  const versions = identifyingEmail ? await fetchLatestVersions() : {}
+
   // ── Render: anonymous fallback ──────────────────────────────────
   if (!identifyingEmail) {
     return (
@@ -311,12 +347,48 @@ export default async function DashboardPage({
         </section>
       )}
 
+      {/* 0n Chrome Extension — free for every signed-in user */}
+      <section className="card mb-6">
+        <div className="flex items-start gap-3 mb-3">
+          <Puzzle className="w-6 h-6 text-[var(--accent)] shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <div className="flex items-baseline gap-2 flex-wrap">
+              <h2 className="text-lg font-bold">0n Chrome Extension</h2>
+              {versions['0n-extension']?.version && (
+                <span className="text-xs font-mono text-[var(--text-muted)]">
+                  v{versions['0n-extension'].version}
+                  {versions['0n-extension'].released_at &&
+                    ` · ${fmtRelease(versions['0n-extension'].released_at)}`}
+                </span>
+              )}
+            </div>
+            <p className="text-sm text-[var(--text-muted)] mt-0.5">
+              Free with your account. LinkedIn AI, content composer, stack
+              scanner, Fiverr generator, Jaxx chat — all in your browser
+              sidebar.
+            </p>
+          </div>
+        </div>
+        <a
+          href="/api/downloads/secure?product=0n-extension"
+          className="btn-primary inline-flex items-center gap-2"
+        >
+          <Download className="w-4 h-4" />
+          Download extension (.zip)
+        </a>
+        <p className="text-xs text-[var(--text-muted)] mt-3">
+          <strong>Install:</strong> unzip → <code>chrome://extensions</code> →
+          enable Developer mode → Load unpacked → select the unzipped folder →
+          paste your token below into the side panel.
+        </p>
+      </section>
+
       {/* All downloads */}
       <section className="card mb-6">
         <h2 className="text-lg font-bold mb-1">Your downloads</h2>
         <p className="text-sm text-[var(--text-muted)] mb-4">
           Every plugin you&apos;ve purchased — link is permanent, lifetime updates
-          included.
+          included. Versions auto-refresh from the latest GitHub release.
         </p>
         {allPurchases.length === 0 ? (
           <p className="text-sm text-[var(--text-muted)]">
@@ -330,16 +402,28 @@ export default async function DashboardPage({
             {allPurchases.map((p) => {
               const meta = PRODUCTS[p.product_slug]
               if (!meta) return null
+              const ver = versions[p.product_slug]
               return (
                 <li
                   key={p.id}
                   className="flex items-center justify-between gap-4 py-3 border-t border-[var(--border)] first:border-t-0 first:pt-0"
                 >
                   <div className="min-w-0 flex-1">
-                    <div className="font-semibold">{meta.name}</div>
+                    <div className="flex items-baseline gap-2 flex-wrap">
+                      <span className="font-semibold">{meta.name}</span>
+                      {ver?.version && (
+                        <span className="text-xs font-mono text-emerald-400">
+                          v{ver.version}
+                        </span>
+                      )}
+                    </div>
                     <div className="text-xs text-[var(--text-muted)] mt-0.5">
-                      {fmtDate(p.created_at)} ·{' '}
-                      {fmtAmount(p.amount_total_cents, p.currency)} ·{' '}
+                      Purchased {fmtDate(p.created_at)} ·{' '}
+                      {fmtAmount(p.amount_total_cents, p.currency)}
+                      {ver?.released_at && (
+                        <> · Latest released {fmtRelease(ver.released_at)}</>
+                      )}{' '}
+                      ·{' '}
                       <Link href={meta.helpUrl} className="underline">
                         Setup guide
                       </Link>
