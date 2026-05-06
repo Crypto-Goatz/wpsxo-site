@@ -55,14 +55,6 @@ export async function getProfileByToken(
   token: string,
 ): Promise<ProfileWithCredits | null> {
   if (!token?.startsWith('0n_')) return null
-
-  // Diagnostic: confirm we have the right env wired up.
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-  const keyHead = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').slice(0, 20)
-  if (!url.includes('pwujhhmlrtxjmjzyttwn')) {
-    console.error('[credits.getProfileByToken] WRONG SUPABASE URL:', url.slice(0, 50))
-  }
-
   const { data, error } = await supabaseAdmin
     .from('profiles')
     .select(
@@ -70,40 +62,9 @@ export async function getProfileByToken(
     )
     .eq('access_token', token)
     .maybeSingle()
-
   if (error) {
-    console.error(
-      '[credits.getProfileByToken] db error:',
-      error.message,
-      'code:',
-      error.code,
-      'details:',
-      error.details,
-      'hint:',
-      error.hint,
-      'url-host:',
-      url.slice(8, 35),
-      'key-head:',
-      keyHead,
-    )
+    console.error('[credits.getProfileByToken]', error.message)
     return null
-  }
-  if (!data) {
-    console.warn(
-      '[credits.getProfileByToken] NO MATCH for token-prefix:',
-      token.slice(0, 8),
-      '...',
-      token.slice(-4),
-      'url-host:',
-      url.slice(8, 35),
-      'key-head:',
-      keyHead,
-    )
-  } else {
-    console.log(
-      '[credits.getProfileByToken] hit:',
-      (data as ProfileWithCredits).email,
-    )
   }
   return (data as ProfileWithCredits | null) || null
 }
