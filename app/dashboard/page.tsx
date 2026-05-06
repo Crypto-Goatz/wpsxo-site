@@ -72,22 +72,28 @@ const PRODUCTS: Record<
 > = {
   wpsxo: {
     name: 'WP-SXO',
-    downloadUrl:
-      'https://github.com/Crypto-Goatz/wpsxo-plugin/releases/latest/download/wpsxo.zip',
+    // Routes through the secure proxy — license-gated, supports private repo.
+    downloadUrl: '/api/downloads/secure?product=wpsxo',
     helpUrl: '/products/wpsxo',
   },
+  figgypress: {
+    name: 'FiggyPress — Figma → WordPress',
+    downloadUrl: '/api/downloads/secure?product=figgypress',
+    helpUrl: '/products/figgypress',
+    figmaInstallNote:
+      'In Figma: Plugins → Development → Import plugin from manifest → select manifest.json from the unzipped folder.',
+  },
+  // Backwards-compat: anyone with an old purchase under slug=onpress still resolves.
   onpress: {
-    name: 'OnPress — Figma → WordPress',
-    downloadUrl:
-      'https://github.com/Crypto-Goatz/onpress/releases/latest/download/onpress.zip',
-    helpUrl: '/products/onpress',
+    name: 'FiggyPress — Figma → WordPress',
+    downloadUrl: '/api/downloads/secure?product=onpress',
+    helpUrl: '/products/figgypress',
     figmaInstallNote:
       'In Figma: Plugins → Development → Import plugin from manifest → select manifest.json from the unzipped folder.',
   },
   'detect-and-refine': {
     name: 'Detect & Refine',
-    downloadUrl:
-      'https://github.com/Crypto-Goatz/detect-and-refine-wp/releases/latest/download/detect-and-refine.zip',
+    downloadUrl: '/api/downloads/secure?product=detect-and-refine',
     helpUrl: '/products/detect-and-refine',
   },
   'founder-bundle': {

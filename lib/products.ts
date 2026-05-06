@@ -114,7 +114,9 @@ export const PRODUCTS: Product[] = [
       },
     ],
     stripeProductId: 'prod_URzAp6T3rDu0WN',
-    githubRepo: 'Crypto-Goatz/wpsxo-plugin',
+    // WP-SXO ships from the 0nwp repo (production code, Git Updater, SXO
+    // transformations, Yoast). The wpsxo.zip alias is on that release.
+    githubRepo: 'Crypto-Goatz/0nwp',
     downloadFileName: 'wpsxo.zip',
     category: 'seo',
     hero_bullets: [
@@ -232,8 +234,8 @@ export const PRODUCTS: Product[] = [
     ],
   },
   {
-    slug: 'onpress',
-    name: 'OnPress',
+    slug: 'figgypress',
+    name: 'FiggyPress',
     tagline: 'Figma → WordPress. Theme + plugin. In one shot.',
     description:
       'The first-ever Figma to WordPress converter that ships a real, production-grade theme — not a pretty-looking cage. Extract design tokens. Generate a complete theme (style.css, functions.php, every template). Generate a plugin with custom Gutenberg blocks. Download ready-to-install ZIP.',
@@ -254,6 +256,18 @@ export const PRODUCTS: Product[] = [
       'Lifetime updates included',
     ],
     prices: [
+      {
+        id: 'price_1TTwoYLENnHWT4tVOfRpDx43',
+        label: 'Monthly',
+        amount: 19,
+        interval: 'month',
+        features: [
+          'Unlimited Figma → WP conversions',
+          'Theme + plugin generation',
+          'Cancel any time',
+          'Free for Pro/Studio members',
+        ],
+      },
       {
         id: 'price_1TT5C2LENnHWT4tV3o7ruThm',
         label: 'Founder Solo',
@@ -286,7 +300,7 @@ export const PRODUCTS: Product[] = [
     ],
     stripeProductId: 'prod_URzA9GrvYQguxF',
     githubRepo: 'Crypto-Goatz/onpress',
-    downloadFileName: 'onpress-wp.zip',
+    downloadFileName: 'figgypress.zip',
     category: 'figma',
     hero_bullets: [
       'A real WordPress theme — not an iframe of your Figma file',
@@ -305,7 +319,7 @@ export const PRODUCTS: Product[] = [
       },
       {
         q: 'Can I sell the themes I generate?',
-        a: 'Yes. Founder Studio includes white-label rights — your client gets a theme branded as theirs, no OnPress credit required. Solo lets you build for yourself but not resell.',
+        a: 'Yes. Founder Studio includes white-label rights — your client gets a theme branded as theirs, no FiggyPress credit required. Solo lets you build for yourself but not resell.',
       },
       {
         q: 'WooCommerce?',

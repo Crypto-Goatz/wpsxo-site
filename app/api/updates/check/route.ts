@@ -65,7 +65,8 @@ const PRODUCTS: Record<string, Manifest> = {
   },
   wpsxo: {
     slug: 'wpsxo',
-    github: 'Crypto-Goatz/wpsxo-plugin',
+    // WP-SXO is the licensed Pro tier of 0nWP — same release line.
+    github: 'Crypto-Goatz/0nwp',
     asset: 'wpsxo.zip',
     homepage: 'https://wpsxo.com/products/wpsxo',
     tested: '6.7',
