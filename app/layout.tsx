@@ -40,7 +40,13 @@ export default function RootLayout({
                 WP-SXO
               </a>
               <a
-                href="/products/onpress"
+                href="/products/figgypress"
+                className="hidden md:inline text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+              >
+                FiggyPress
+              </a>
+              <a
+                href="/products/onpress-wp"
                 className="hidden md:inline text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
               >
                 OnPress
@@ -93,10 +99,18 @@ export default function RootLayout({
                 </li>
                 <li>
                   <a
-                    href="/products/onpress"
+                    href="/products/figgypress"
                     className="hover:text-[var(--text-primary)]"
                   >
-                    OnPress
+                    FiggyPress (Figma → WP)
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/products/onpress-wp"
+                    className="hover:text-[var(--text-primary)]"
+                  >
+                    OnPress (0n for WordPress)
                   </a>
                 </li>
                 <li>
